@@ -19,7 +19,7 @@ defmodule LanguageList do
     length(list)
   end
 
-  def functional_list?(list) do
-    Enum.any?(list, &(&1 == "Elixir"))
-  end
+  def functional_list?([]), do: false
+  def functional_list?(["Elixir" | _tail]), do: true
+  def functional_list?([_ | tail]), do: functional_list?(tail)
 end
