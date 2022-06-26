@@ -5,10 +5,7 @@ defmodule Prime do
   @spec nth(non_neg_integer) :: non_neg_integer
   def nth(count) do
     2
-    |> Stream.unfold(fn n ->
-      is_prime = prime?(n)
-      {%{n: n, prime?: is_prime}, n + 1}
-    end)
+    |> Stream.unfold(&{%{n: &1, prime?: prime?(&1)}, &1 + 1})
     |> Stream.filter(& &1.prime?)
     |> Enum.take(count)
     |> Enum.reverse()
@@ -26,12 +23,10 @@ defmodule Prime do
   defp do_trial_division(n, square_root_of_n, current) do
     not_composite? = rem(n, current) != 0
 
-    case not_composite? do
-      true when current < square_root_of_n ->
-        do_trial_division(n, square_root_of_n, current + 1)
-
-      _ ->
-        not_composite?
+    if not_composite? and current < square_root_of_n do
+      do_trial_division(n, square_root_of_n, current + 1)
+    else
+      not_composite?
     end
   end
 end
