@@ -6,12 +6,13 @@ defmodule PigLatin do
   def translate(phrase) do
     phrase
     |> String.split()
+    |> Enum.map(&String.graphemes/1)
     |> Enum.map(&translate_word/1)
     |> Enum.join(" ")
   end
 
-  def translate_word(word) do
-    downcased = String.downcase(word)
+  def translate_word(word) when is_list(word) do
+    downcased = Enum.map(word, &String.downcase/1)
     consonant? = starts_with_consonant?(downcased)
 
     %{
@@ -24,38 +25,40 @@ defmodule PigLatin do
   end
 
   def do_translate(%{qu_with_preceding?: true}, word) do
-    <<preceding::utf8, _::utf8, _::utf8>> <> rest = word
-    translate_word(rest <> <<preceding::utf8>> <> "qu")
+    [preceding, _, _ | rest] = word
+    translate_word(rest ++ [preceding | ~w(q u)])
   end
 
   def do_translate(%{qu?: true}, word) do
-    <<_::utf8, _::utf8>> <> rest = word
-    translate_word(rest <> "qu")
+    [_, _ | rest] = word
+
+    translate_word(rest ++ ~w(q u))
   end
 
   def do_translate(%{vowel?: true}, word) do
-    word <> "ay"
+    word ++ ~w(a y)
   end
 
   def do_translate(%{consonant?: true}, word) do
-    <<first::utf8>> <> rest = word
-    translate_word(rest <> <<first::utf8>>)
+    [first | rest] = word
+    translate_word(rest ++ [first])
   end
 
-  def starts_with_x_or_y_with_followed?("x" <> followed), do: starts_with_consonant?(followed)
+  def starts_with_x_or_y_with_followed?(["x" | followed]), do: starts_with_consonant?(followed)
 
-  def starts_with_x_or_y_with_followed?("y" <> followed), do: starts_with_consonant?(followed)
+  def starts_with_x_or_y_with_followed?(["y" | followed]), do: starts_with_consonant?(followed)
 
   def starts_with_x_or_y_with_followed?(_), do: false
 
-  def starts_with_qu_and_preceding?(<<_::utf8>> <> rest), do: starts_with_qu?(rest)
-  def starts_with_qu?(word), do: String.starts_with?(word, "qu")
+  def starts_with_qu_and_preceding?([_ | rest]), do: starts_with_qu?(rest)
+  def starts_with_qu?(["q", "u" | _]), do: true
+  def starts_with_qu?(_), do: false
 
-  def starts_with_vowel?(word) do
-    "aeiou" =~ String.first(word)
+  def starts_with_vowel?([first | _]) do
+    first in ~w(a e i o u)
   end
 
   def starts_with_consonant?(word) do
-    "bcdfghklmnpqrstxzy" =~ String.first(word)
+    not starts_with_vowel?(word)
   end
 end
