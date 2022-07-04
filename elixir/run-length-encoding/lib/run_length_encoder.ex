@@ -29,35 +29,26 @@ defmodule RunLengthEncoder do
   def decode(string) do
     string
     |> String.to_charlist()
-    |> Enum.map(fn char ->
-      cond do
-        char in @digits -> {:digit, char}
-        char -> {:alpha, char}
-      end
-    end)
     |> Enum.chunk_by(fn
-      {:alpha, _} = alpha ->
-        alpha
-
-      {:digit, _} ->
+      char when char in @digits ->
         :digit
+
+      alpha ->
+        alpha
     end)
     |> Enum.map(fn
-      [{:digit, _} | _] = list ->
-        {:digit, list |> Enum.map(fn {_, val} -> val end) |> List.to_integer()}
+      [char | _] = list when char in @digits ->
+        List.to_integer(list)
 
-      [{:alpha, alpha}] ->
-        {:alpha, List.to_string([alpha])}
+      [alpha] ->
+        List.to_string([alpha])
     end)
     |> Enum.reduce([], fn
-      {:alpha, alpha}, [{:digit, count} | acc] ->
+      alpha, [count | acc] when is_binary(alpha) and is_integer(count) ->
         [String.duplicate(alpha, count) | acc]
 
-      {:alpha, alpha}, acc ->
-        [alpha | acc]
-
-      {:digit, _} = digit, acc ->
-        [digit | acc]
+      char, acc ->
+        [char | acc]
     end)
     |> Enum.reverse()
     |> Enum.join()
