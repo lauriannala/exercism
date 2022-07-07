@@ -30,19 +30,9 @@ defmodule BinarySearchTree do
     do_in_order(tree, [])
   end
 
-  def do_in_order(tree, acc) do
-    case tree do
-      %{data: data, left: nil, right: nil} ->
-        acc ++ [data]
+  def do_in_order(nil, _), do: []
 
-      %{data: data, left: left, right: right} when not is_nil(left) and not is_nil(right) ->
-        do_in_order(left, acc) ++ [data] ++ do_in_order(right, acc)
-
-      %{data: data, left: left} when not is_nil(left) ->
-        do_in_order(left, acc) ++ [data]
-
-      %{data: data, right: right} when not is_nil(right) ->
-        [data] ++ do_in_order(right, acc)
-    end
+  def do_in_order(%{data: data, left: left, right: right}, acc) do
+    do_in_order(left, acc) ++ [data] ++ do_in_order(right, acc)
   end
 end
