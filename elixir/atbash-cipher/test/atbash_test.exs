@@ -46,21 +46,21 @@ defmodule AtbashTest do
   end
 
   describe "decode" do
-    @tag :pending
+    # @tag :pending
     test "exercism" do
       cipher = "vcvix rhn"
       plaintext = "exercism"
       assert Atbash.decode(cipher) == plaintext
     end
 
-    @tag :pending
+    # @tag :pending
     test "a sentence" do
       cipher = "zmlyh gzxov rhlug vmzhg vkkrm thglm v"
       plaintext = "anobstacleisoftenasteppingstone"
       assert Atbash.decode(cipher) == plaintext
     end
 
-    @tag :pending
+    # @tag :pending
     test "numbers" do
       cipher = "gvhgr mt123 gvhgr mt"
       plaintext = "testing123testing"

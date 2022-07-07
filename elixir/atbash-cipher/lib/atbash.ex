@@ -22,5 +22,18 @@ defmodule Atbash do
 
   @spec decode(String.t()) :: String.t()
   def decode(cipher) do
+    cipher
+    |> String.replace(~r/\s/, "")
+    |> String.to_charlist()
+    |> Enum.map(fn
+      char ->
+        @cipher
+        |> Enum.find_index(&(&1 == char))
+        |> then(fn
+          nil -> char
+          index -> ?a + index
+        end)
+    end)
+    |> List.to_string()
   end
 end
