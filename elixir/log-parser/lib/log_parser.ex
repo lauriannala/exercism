@@ -2,19 +2,19 @@ defmodule LogParser do
   @valid ~r/^\[DEBUG\]|\[INFO\]|\[WARNING\]|\[ERROR\]/
   @split_by ~r/<(~|-|\*|=)*>/
 
-  def valid_line?(line) do
-    Regex.match?(@valid, line)
-  end
+  def valid_line?(line), do: Regex.match?(@valid, line)
 
-  def split_line(line) do
-    String.split(line, @split_by)
-  end
+  def split_line(line), do: String.split(line, @split_by)
 
-  def remove_artifacts(line) do
-    # Please implement the remove_artifacts/1 function
-  end
+  def remove_artifacts(line), do: String.replace(line, ~r/end-of-line\d+/i, "")
 
   def tag_with_user_name(line) do
-    # Please implement the tag_with_user_name/1 function
+    case Regex.scan(~r/User\s+(\S*)/, line) do
+      [[_, user]] ->
+        "[USER] #{user} #{line}"
+
+      _ ->
+        line
+    end
   end
 end
