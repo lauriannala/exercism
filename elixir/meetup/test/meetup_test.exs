@@ -127,7 +127,7 @@ defmodule MeetupTest do
     assert_dates_equal(date, ~D[2013-10-13])
   end
 
-  @tag :pending
+  # @tag :pending
   test "first Monday of March 2013" do
     date = Meetup.meetup(2013, 3, :monday, :first)
     assert_dates_equal(date, ~D[2013-03-04])
@@ -493,7 +493,7 @@ defmodule MeetupTest do
     assert_dates_equal(date, ~D[2013-07-31])
   end
 
-  @tag :pending
+  @tag :only
   test "last Wednesday of August 2013" do
     date = Meetup.meetup(2013, 8, :wednesday, :last)
     assert_dates_equal(date, ~D[2013-08-28])
